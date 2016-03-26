@@ -143,6 +143,28 @@ def getCurrentPosition(view):
     else:
         return None
 
+def buildScope(dirs):
+    root = dirs[0]
+
+    cscope_arg_list = ['cscope', '-Rbqk']
+    popen_arg_list = {
+        "shell": False,
+        "stdout": subprocess.PIPE,
+        "stderr": subprocess.PIPE,
+        "cwd": root
+    }
+
+    try:
+        proc = subprocess.Popen(cscope_arg_list, **popen_arg_list)
+    except OSError as e:
+        if e.errno == errno.ENOENT:
+            sublime.error_message("Cscope ERROR: cscope binary \"cscope\" not found!")
+        else:
+            sublime.error_message("Cscope ERROR: %s failed!" % cscope_arg_list)
+
+    output, erroroutput = proc.communicate()
+    # print output
+    # print erroroutput
 
 class CscopeSublimeWorker(threading.Thread):
     def __init__(self, view, platform, root, database, symbol, mode, executable):
@@ -385,6 +407,11 @@ class CscopeCommand(sublime_plugin.TextCommand):
     def run(self, edit, mode):
         self.mode = mode
         self.executable = get_setting("executable", "cscope")
+
+        if self.mode == 9:
+            dirs = args(dirs)
+            buildScope(dirs)
+            return
 
         if self.database == None:
             self.update_database(self.view.file_name())

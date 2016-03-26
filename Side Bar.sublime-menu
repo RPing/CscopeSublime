@@ -1,0 +1,13 @@
+[
+    {
+        "caption": "Cscope: Rebuild scope",
+        "command": "cscope",
+        "args": {
+            "mode": 9,
+            "dirs": []
+        }
+    },
+    {
+        "caption": "-", "id": "cscope"
+    }
+]
