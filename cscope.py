@@ -409,7 +409,7 @@ class CscopeCommand(sublime_plugin.TextCommand):
         self.executable = get_setting("executable", "cscope")
 
         if self.mode == 9:
-            dirs = args(dirs)
+            dirs = args['dirs']
             buildScope(dirs)
             return
 
