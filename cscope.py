@@ -143,10 +143,10 @@ def getCurrentPosition(view):
     else:
         return None
 
-def buildScope(dirs, executable):
+def buildScope(dirs):
     root = dirs[0]
 
-    cscope_cmd = 'find . -type f > cscope.files && ' + executable + ' -Rbqk'
+    cscope_cmd = 'find . -type f > cscope.files && cscope -Rbqk'
     popen_arg_list = {
         "shell": True,
         "stdout": subprocess.PIPE,
@@ -410,7 +410,7 @@ class CscopeCommand(sublime_plugin.TextCommand):
 
         if self.mode == 9:
             dirs = args['dirs']
-            buildScope(dirs, self.executable)
+            buildScope(dirs)
             return
 
         if self.database == None:
