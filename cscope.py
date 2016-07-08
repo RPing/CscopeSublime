@@ -143,19 +143,19 @@ def getCurrentPosition(view):
     else:
         return None
 
-def buildScope(dirs):
+def buildScope(dirs, executable):
     root = dirs[0]
 
-    cscope_arg_list = ['cscope', '-Rbqk']
+    cscope_cmd = 'find . -type f > cscope.files && ' + executable + ' -Rbqk'
     popen_arg_list = {
-        "shell": False,
+        "shell": True,
         "stdout": subprocess.PIPE,
         "stderr": subprocess.PIPE,
         "cwd": root
     }
 
     try:
-        proc = subprocess.Popen(cscope_arg_list, **popen_arg_list)
+        proc = subprocess.Popen(cscope_cmd, **popen_arg_list)
     except OSError as e:
         if e.errno == errno.ENOENT:
             sublime.error_message("Cscope ERROR: cscope binary \"cscope\" not found!")
@@ -404,13 +404,13 @@ class CscopeCommand(sublime_plugin.TextCommand):
         cscope_view.set_syntax_file(CSCOPE_SYNTAX_FILE)
         cscope_view.set_read_only(True)
 
-    def run(self, edit, mode):
-        self.mode = mode
+    def run(self, edit, **args):
+        self.mode = args['mode']
         self.executable = get_setting("executable", "cscope")
 
         if self.mode == 9:
             dirs = args['dirs']
-            buildScope(dirs)
+            buildScope(dirs, self.executable)
             return
 
         if self.database == None:
